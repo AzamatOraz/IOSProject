@@ -16,3 +16,4 @@ I want to create aplication where people can find appropriate place for chill. T
 * 14 week: bug fixes
 * 15 week: Final view
 
+[https://app.moqups.com/azamatoraz@gmail.com/yWOR1wuWPL/view]
