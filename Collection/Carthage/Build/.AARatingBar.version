@@ -1,0 +1,18 @@
+{
+  "Mac" : [
+
+  ],
+  "watchOS" : [
+
+  ],
+  "tvOS" : [
+
+  ],
+  "commitish" : "f0731363a399ddaf965593054676ab4f0c8611bc",
+  "iOS" : [
+    {
+      "name" : "AARatingBar",
+      "hash" : "545742314aa0ac2f8dfba92d1da44282de9c977908139b4134976ae528ff3319"
+    }
+  ]
+}
