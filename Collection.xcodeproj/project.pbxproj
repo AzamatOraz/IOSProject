@@ -22,6 +22,9 @@
 		72A964E81FC6B76F00B0E645 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A964E21FC6B76F00B0E645 /* AppDelegate.swift */; };
 		72A964EB1FC6B96E00B0E645 /* ListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 72A964EA1FC6B96E00B0E645 /* ListCell.xib */; };
 		72A964ED1FC6BCBC00B0E645 /* ListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A964EC1FC6BCBC00B0E645 /* ListCell.swift */; };
+		8B2036A91FC8925C0027005A /* ComposeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2036A81FC8925C0027005A /* ComposeView.swift */; };
+		8B5475301FC9DD72001C8A70 /* BarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B54752F1FC9DD72001C8A70 /* BarViewController.swift */; };
+		8B5475321FC9DDB9001C8A70 /* BarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5475311FC9DDB9001C8A70 /* BarView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -55,6 +58,9 @@
 		72A964EC1FC6BCBC00B0E645 /* ListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListCell.swift; sourceTree = "<group>"; };
 		72E3A8BA1FC5E4E200F8BBB1 /* Collection.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Collection.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		86B47712251FBA1D2BB6788E /* Pods-Collection.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Collection.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Collection/Pods-Collection.debug.xcconfig"; sourceTree = "<group>"; };
+		8B2036A81FC8925C0027005A /* ComposeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeView.swift; sourceTree = "<group>"; };
+		8B54752F1FC9DD72001C8A70 /* BarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarViewController.swift; sourceTree = "<group>"; };
+		8B5475311FC9DDB9001C8A70 /* BarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarView.swift; sourceTree = "<group>"; };
 		9A6CB42E04C5D1FE90902F0B /* Pods_Collection.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Collection.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -101,19 +107,12 @@
 		72A964DC1FC6B76F00B0E645 /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				72A964DD1FC6B76F00B0E645 /* Models */,
 				72A964DE1FC6B76F00B0E645 /* HomeViewController.swift */,
 				723360721FC70DD20026D949 /* ComposeViewController.swift */,
+				8B54752F1FC9DD72001C8A70 /* BarViewController.swift */,
 				72A964DF1FC6B76F00B0E645 /* Views */,
 			);
 			path = Home;
-			sourceTree = "<group>";
-		};
-		72A964DD1FC6B76F00B0E645 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Models;
 			sourceTree = "<group>";
 		};
 		72A964DF1FC6B76F00B0E645 /* Views */ = {
@@ -121,6 +120,8 @@
 			children = (
 				72A964E91FC6B8AA00B0E645 /* Cells */,
 				72A964E01FC6B76F00B0E645 /* HomeView.swift */,
+				8B2036A81FC8925C0027005A /* ComposeView.swift */,
+				8B5475311FC9DDB9001C8A70 /* BarView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -312,12 +313,14 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Collection/Pods-Collection-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
@@ -334,10 +337,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B5475321FC9DDB9001C8A70 /* BarView.swift in Sources */,
 				723360731FC70DD20026D949 /* ComposeViewController.swift in Sources */,
 				72A964E81FC6B76F00B0E645 /* AppDelegate.swift in Sources */,
 				72A964ED1FC6BCBC00B0E645 /* ListCell.swift in Sources */,
+				8B2036A91FC8925C0027005A /* ComposeView.swift in Sources */,
 				72A964E61FC6B76F00B0E645 /* HomeViewController.swift in Sources */,
+				8B5475301FC9DD72001C8A70 /* BarViewController.swift in Sources */,
 				72A964E71FC6B76F00B0E645 /* HomeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
