@@ -66,14 +66,26 @@ class HomeViewController : UIViewController {
 //            }
 //        })
 //
-        databaseHandle = ref?.child("Bar").observe(.childAdded, with: { (snapshot) in
-            
-            if let actualPost = snapshot.value as? [String: Any] {
-                let getData = actualPost["Bar"] as? String
+//        databaseHandle = ref?.child("Bar").observe(.childAdded, with: { (snapshot) in
+//
+//
+//        })
+        
+        ref = Database.database().reference()
+        let itemsRef = ref.child("Bar")
+        itemsRef.observe(DataEventType.value, with: { (snapshot) in
+            for ingredient in snapshot.children.allObjects as![DataSnapshot]{
+                let ingredientObject = ingredient.value as? [String: AnyObject]
+                let ingredientName = ingredientObject?["BarName"] as? String ?? ""
                 
-                self.homeView.tableView.reloadData()
+                self.postData.append(ingredientName)
             }
-        })
+            
+            self.homeView.tableView.reloadData()
+        }) { (error) in
+            print(error.localizedDescription)
+            
+        }
     }
     
 }
@@ -85,6 +97,7 @@ extension HomeViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! ListCell
         cell.barView.backgroundColor = UIColor.green
         cell.articleLabel.text = postData[indexPath.row]
+        cell.articleLabel.textColor = .black
         cell.ratingBar.color = UIColor.red
         cell.ratingBar.value = 3 
         return cell
@@ -93,10 +106,18 @@ extension HomeViewController: UITableViewDataSource {
 }
 
 extension HomeViewController : UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        navigationController?.pushViewController(BarViewController(), animated: true)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: NSIndexPath) {
+        self.performSegue(withIdentifier: "showQuestionnaire", sender: indexPath)
+        
     }
-    
+    func prepareForSegue(segue: UIStoryboardSegue!, sender: AnyObject!) {
+        if (segue.identifier == "showQuestionnaire") {
+            let controller = (segue.destination as! UINavigationController).topViewController as! BarViewController
+            let row = (sender as! NSIndexPath).row; //we know that sender is an NSIndexPath here.
+            let patientQuestionnaire = postData[row]
+            controller.clickBar = patientQuestionnaire
+        }
+    }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 110.0
     }

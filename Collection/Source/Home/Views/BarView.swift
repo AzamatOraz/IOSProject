@@ -67,7 +67,7 @@ class BarView : UIView {
             make.height.equalTo(60)
             make.width.equalTo(300)
             make.left.equalTo(20)
-            make.top.equalTo(descLabel.snp.bottom)
+            make.top.equalTo(descLabel .snp.bottom)
             
         }
         

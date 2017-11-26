@@ -66,7 +66,7 @@ class ComposeViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBAction func myRightSideBarButtonItemTapped(_ sender: Any)
     {
         if composeView.titleText.text != "" && composeView.descText.text != "" && composeView.avpText.text != "" && imgUrl != ""{
-            ref.child("Bar").child(composeView.titleText.text!).setValue(["Description": composeView.descText.text as String!, "AveragePrice": composeView.avpText.text as String!, "imageUrl": imgUrl as String!])
+            ref.child("Bar").child(composeView.titleText.text!).setValue(["BarName": composeView.titleText.text as String!, "Description": composeView.descText.text as String!, "AveragePrice": composeView.avpText.text as String!, "imageUrl": imgUrl as String!])
             
             composeView.titleText.text = ""
             composeView.descText.text = ""
