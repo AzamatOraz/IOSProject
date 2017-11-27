@@ -17,6 +17,8 @@ class HomeViewController : UIViewController {
     var ref:DatabaseReference!
     var databaseHandle:DatabaseHandle!
     var postData = [String]()
+    var postImage = [UIImage]()
+    var selectedPost = ""
     
     override func loadView() {
         self.view = HomeView()
@@ -74,11 +76,12 @@ class HomeViewController : UIViewController {
         ref = Database.database().reference()
         let itemsRef = ref.child("Bar")
         itemsRef.observe(DataEventType.value, with: { (snapshot) in
-            for ingredient in snapshot.children.allObjects as![DataSnapshot]{
-                let ingredientObject = ingredient.value as? [String: AnyObject]
-                let ingredientName = ingredientObject?["BarName"] as? String ?? ""
-                
-                self.postData.append(ingredientName)
+            for barData in snapshot.children.allObjects as![DataSnapshot]{
+                let barObject = barData.value as? [String: AnyObject]
+                let barName = barObject?["BarName"] as? String ?? ""
+                let imageUrl = barObject?["imageUrl"] as? String ?? ""
+                self.postData.append(barName)
+                self.getImage(str: imageUrl)
             }
             
             self.homeView.tableView.reloadData()
@@ -88,6 +91,44 @@ class HomeViewController : UIViewController {
         }
     }
     
+    func getImage(str: String) {
+        
+        let catPictureURL = URL(string: str)!
+        
+        // Creating a session object with the default configuration.
+        // You can read more about it here https://developer.apple.com/reference/foundation/urlsessionconfiguration
+        let session = URLSession(configuration: .default)
+        
+        // Define a download task. The download task will download the contents of the URL as a Data object and then you can do what you wish with that data.
+        let downloadPicTask = session.dataTask(with: catPictureURL) { (data, response, error) in
+            // The download has finished.
+            if let e = error {
+                print("Error downloading cat picture: \(e)")
+            } else {
+                // No errors found.
+                // It would be weird if we didn't have a response, so check for that too.
+                if let res = response as? HTTPURLResponse {
+                    print("Downloaded cat picture with response code \(res.statusCode)")
+                    if let imageData = data {
+                        // Finally convert that Data into an image and do what you wish with it.
+                        let image = UIImage(data: imageData)
+                        DispatchQueue.main.async {
+                            self.postImage.append(image!)
+                        }
+                        
+                        
+                    } else {
+                        print("Couldn't get image: Image is nil")
+                    }
+                } else {
+                    print("Couldn't get response code for some reason")
+                }
+            }
+        }
+        
+        downloadPicTask.resume()
+    }
+    
 }
 extension HomeViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -95,7 +136,7 @@ extension HomeViewController: UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! ListCell
-        cell.barView.backgroundColor = UIColor.green
+        cell.barView.image = postImage[indexPath.row]
         cell.articleLabel.text = postData[indexPath.row]
         cell.articleLabel.textColor = .black
         cell.ratingBar.color = UIColor.red
@@ -106,18 +147,17 @@ extension HomeViewController: UITableViewDataSource {
 }
 
 extension HomeViewController : UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: NSIndexPath) {
-        self.performSegue(withIdentifier: "showQuestionnaire", sender: indexPath)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let vc = BarViewController()
         
+        vc.clickBar = postData[indexPath.row]
+        
+        self.navigationController?.pushViewController(vc, animated: true)
+//        selectedPost = postData[indexPath.row]
+//        self.performSegue(withIdentifier: "go", sender: indexPath)
+//        navigationController?.pushViewController(BarViewController(), animated: true)
     }
-    func prepareForSegue(segue: UIStoryboardSegue!, sender: AnyObject!) {
-        if (segue.identifier == "showQuestionnaire") {
-            let controller = (segue.destination as! UINavigationController).topViewController as! BarViewController
-            let row = (sender as! NSIndexPath).row; //we know that sender is an NSIndexPath here.
-            let patientQuestionnaire = postData[row]
-            controller.clickBar = patientQuestionnaire
-        }
-    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 110.0
     }

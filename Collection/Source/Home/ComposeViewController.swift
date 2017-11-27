@@ -121,7 +121,6 @@ class ComposeViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        print("123")
         var selectedImageFromPicker: UIImage?
         
         if let editedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {

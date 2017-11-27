@@ -36,9 +36,9 @@ class BarView : UIView {
     
     func setupLayout() {
         imgView.snp.makeConstraints { (make) -> Void in
-            make.height.equalTo(120)
-            make.width.equalTo(120)
-            make.left.equalTo(20)
+            make.height.equalTo(200)
+            make.width.equalTo(200)
+            make.left.equalTo(40)
             make.top.equalTo(60)
         }
         titleLabel.snp.makeConstraints { (make) -> Void in
@@ -58,7 +58,7 @@ class BarView : UIView {
         avpLabel.snp.makeConstraints { (make) -> Void in
             make.height.equalTo(60)
             make.width.equalTo(100)
-            make.left.equalTo(20)
+            make.left.equalTo(40)
             make.top.equalTo(titleLabel.snp.bottom)
             make.left.equalTo(imgView.snp.right)
         }
