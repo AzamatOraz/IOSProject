@@ -10,4 +10,5 @@ target 'Collection' do
 	pod 'Firebase/Core'
 	pod 'Firebase/Storage'
 	pod 'FirebaseUI/Storage'
+ 	pod 'Kingfisher', '~> 4.0'
 end

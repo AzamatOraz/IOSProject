@@ -19,6 +19,7 @@ class BarView : UIView {
     let avpLabel = UITextView()
     let imgView = UIImageView()
     let ratBar = AARatingBar()
+    let submitRank = UIButton()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -27,6 +28,7 @@ class BarView : UIView {
         addSubview(avpLabel)
         addSubview(imgView)
         addSubview(ratBar)
+        addSubview(submitRank)
         setupLayout()
     }
     
@@ -35,43 +37,48 @@ class BarView : UIView {
     }
     
     func setupLayout() {
+        imgView.backgroundColor = .red
         imgView.snp.makeConstraints { (make) -> Void in
+            make.width.equalToSuperview()
             make.height.equalTo(200)
-            make.width.equalTo(200)
-            make.left.equalTo(40)
-            make.top.equalTo(60)
+            make.top.equalToSuperview().offset(100)
+            
         }
         titleLabel.snp.makeConstraints { (make) -> Void in
             make.height.equalTo(60)
             make.width.equalTo(200)
             make.left.equalTo(40)
-            make.top.equalTo(60)
-            make.left.equalTo(imgView.snp.right)
+            make.top.equalTo(imgView.snp.bottom)
         }
         descLabel.snp.makeConstraints { (make) -> Void in
             make.height.equalTo(60)
             make.width.equalTo(300)
             make.left.equalTo(20)
-            make.top.equalTo(imgView.snp.bottom)
+            make.top.equalTo(titleLabel.snp.bottom)
         }
         
         avpLabel.snp.makeConstraints { (make) -> Void in
             make.height.equalTo(60)
             make.width.equalTo(100)
             make.left.equalTo(40)
-            make.top.equalTo(titleLabel.snp.bottom)
-            make.left.equalTo(imgView.snp.right)
+            make.top.equalTo(descLabel.snp.bottom)
+            
         }
         
         ratBar.snp.makeConstraints { (make) -> Void in
             make.height.equalTo(60)
             make.width.equalTo(300)
             make.left.equalTo(20)
-            make.top.equalTo(descLabel .snp.bottom)
+            make.top.equalTo(avpLabel.snp.bottom)
             
         }
         
-        
-        
+        submitRank.snp.makeConstraints { (make) -> Void in
+            make.height.equalTo(60)
+            make.width.equalTo(300)
+            make.left.equalTo(20)
+            make.top.equalTo(ratBar.snp.bottom)
+            
+        }  
     }
 }

@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import AARatingBar
 import FirebaseDatabase
+import Kingfisher
 
 class HomeViewController : UIViewController {
     
@@ -17,14 +18,19 @@ class HomeViewController : UIViewController {
     var ref:DatabaseReference!
     var databaseHandle:DatabaseHandle!
     var postData = [String]()
-    var postImage = [UIImage]()
+    var postPostUrl = [String]()
+    var postRating = [Int]()
+    var imageTap = UIImageView()
     var selectedPost = ""
+    var searchActive : Bool = false
+    var filtered: [String] = []
     
     override func loadView() {
         self.view = HomeView()
     }
     
     override func viewDidLoad() {
+        
         title = "Bar&Pub"
         
         let rightBarButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.compose, target: self, action: #selector(HomeViewController.myRightSideBarButtonItemTapped(_:)))
@@ -39,49 +45,26 @@ class HomeViewController : UIViewController {
     }
     
     func setupTableView() {
+      
         homeView.tableView.register(UINib(nibName: "ListCell", bundle: nil), forCellReuseIdentifier: "Cell")
         homeView.tableView.delegate = self
         homeView.tableView.dataSource = self
-        
+        homeView.searchView.delegate = self
         ref = Database.database().reference()
-        
-//        ref.observe(DataEventType.value, with: { (snapshot) in
-//
-//            //if the reference have some values
-//            if snapshot.childrenCount > 0 {
-//
-//                //clearing the list
-//                self.postData.removeAll()
-//
-//                //iterating through all the values
-//                for bars in snapshot.children.allObjects as! [DataSnapshot] {
-//
-//
-//                    if let post = snapshot.value as? String  {
-//                        self.postData.append(actualPost)
-//
-//                    }
-//                }
-//
-//                //reloading the tableview
-//                self.homeView.tableView.reloadData()
-//            }
-//        })
-//
-//        databaseHandle = ref?.child("Bar").observe(.childAdded, with: { (snapshot) in
-//
-//
-//        })
         
         ref = Database.database().reference()
         let itemsRef = ref.child("Bar")
         itemsRef.observe(DataEventType.value, with: { (snapshot) in
-            for barData in snapshot.children.allObjects as![DataSnapshot]{
+            for barData in snapshot.children.allObjects as! [DataSnapshot]{
                 let barObject = barData.value as? [String: AnyObject]
                 let barName = barObject?["BarName"] as? String ?? ""
+                let rating = barObject?["Rating"] as? Int
                 let imageUrl = barObject?["imageUrl"] as? String ?? ""
+                
+                
                 self.postData.append(barName)
-                self.getImage(str: imageUrl)
+                self.postRating.append(rating!)
+                self.postPostUrl.append(imageUrl)
             }
             
             self.homeView.tableView.reloadData()
@@ -90,58 +73,38 @@ class HomeViewController : UIViewController {
             
         }
     }
-    
-    func getImage(str: String) {
-        
-        let catPictureURL = URL(string: str)!
-        
-        // Creating a session object with the default configuration.
-        // You can read more about it here https://developer.apple.com/reference/foundation/urlsessionconfiguration
-        let session = URLSession(configuration: .default)
-        
-        // Define a download task. The download task will download the contents of the URL as a Data object and then you can do what you wish with that data.
-        let downloadPicTask = session.dataTask(with: catPictureURL) { (data, response, error) in
-            // The download has finished.
-            if let e = error {
-                print("Error downloading cat picture: \(e)")
-            } else {
-                // No errors found.
-                // It would be weird if we didn't have a response, so check for that too.
-                if let res = response as? HTTPURLResponse {
-                    print("Downloaded cat picture with response code \(res.statusCode)")
-                    if let imageData = data {
-                        // Finally convert that Data into an image and do what you wish with it.
-                        let image = UIImage(data: imageData)
-                        DispatchQueue.main.async {
-                            self.postImage.append(image!)
-                        }
-                        
-                        
-                    } else {
-                        print("Couldn't get image: Image is nil")
-                    }
-                } else {
-                    print("Couldn't get response code for some reason")
-                }
-            }
-        }
-        
-        downloadPicTask.resume()
-    }
-    
 }
 extension HomeViewController: UITableViewDataSource {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.homeView.tableView.reloadData()
+    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return postData.count
+        if(searchActive) {
+            return filtered.count
+        }else{
+            return postData.count
+            
+        }
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! ListCell
-        cell.barView.image = postImage[indexPath.row]
-        cell.articleLabel.text = postData[indexPath.row]
-        cell.articleLabel.textColor = .black
-        cell.ratingBar.color = UIColor.red
-        cell.ratingBar.value = 3 
-        return cell
+        
+        if(searchActive){
+            cell.articleLabel.text = filtered[indexPath.row]
+            return cell
+        } else {
+            let url = URL(string: postPostUrl[indexPath.row])
+            cell.barView.kf.setImage(with: url as? Resource)
+            cell.articleLabel.text = postData[indexPath.row]
+            cell.articleLabel.textColor = .black
+            cell.ratingBar.color = UIColor.red
+            cell.ratingBar.value = CGFloat(postRating[indexPath.row])
+            cell.ratingBar.isEnabled = false
+            
+            return cell
+        }
+        
     }
     
 }
@@ -149,13 +112,8 @@ extension HomeViewController: UITableViewDataSource {
 extension HomeViewController : UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = BarViewController()
-        
         vc.clickBar = postData[indexPath.row]
-        
         self.navigationController?.pushViewController(vc, animated: true)
-//        selectedPost = postData[indexPath.row]
-//        self.performSegue(withIdentifier: "go", sender: indexPath)
-//        navigationController?.pushViewController(BarViewController(), animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -163,4 +121,36 @@ extension HomeViewController : UITableViewDelegate {
     }
 }
 
+extension HomeViewController : UISearchBarDelegate {
+    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+        searchActive = true;
+    }
+    
+    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    
+    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        filtered = postData.filter({ (text) -> Bool in
+            let tmp: NSString = text as NSString
+            let range = tmp.range(of: searchText, options: NSString.CompareOptions.caseInsensitive)
+            return range.location != NSNotFound
+        })
+        if(homeView.searchView.text?.isEmpty)!{
+            searchActive = false;
+        } else {
+            searchActive = true;
+        }
+        self.homeView.tableView.reloadData()
+    }
+}
 

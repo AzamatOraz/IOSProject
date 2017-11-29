@@ -15,7 +15,7 @@ import FirebaseStorage
 class ComposeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
 
     var composeView : ComposeView { return self.view as! ComposeView }
-    
+    var homeView = HomeView()
     
     var ref: DatabaseReference!
     var imagePicker = UIImagePickerController()
@@ -54,11 +54,15 @@ class ComposeViewController: UIViewController, UIImagePickerControllerDelegate, 
         composeView.avpLabel.text = "Write Bar's average check for one person"
         composeView.titleText.layer.borderColor = UIColor.black.cgColor
         composeView.titleText.layer.borderWidth = 1
+        composeView.titleText.autocorrectionType = .no
         composeView.descText.layer.borderColor = UIColor.black.cgColor
         composeView.descText.layer.borderWidth = 1
+        composeView.descText.autocorrectionType = .no
         composeView.avpText.layer.borderColor = UIColor.black.cgColor
         composeView.avpText.layer.borderWidth = 1
-        
+        composeView.avpText.keyboardType = UIKeyboardType.numberPad
+        composeView.avpText.autocorrectionType = .no
+
         composeView.imgBtn.backgroundColor = .black
         
     }
@@ -66,11 +70,18 @@ class ComposeViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBAction func myRightSideBarButtonItemTapped(_ sender: Any)
     {
         if composeView.titleText.text != "" && composeView.descText.text != "" && composeView.avpText.text != "" && imgUrl != ""{
-            ref.child("Bar").child(composeView.titleText.text!).setValue(["BarName": composeView.titleText.text as String!, "Description": composeView.descText.text as String!, "AveragePrice": composeView.avpText.text as String!, "imageUrl": imgUrl as String!])
+            ref.child("Bar").child(composeView.titleText.text!).setValue(["BarName": composeView.titleText.text as String!, "Description": composeView.descText.text as String!, "AveragePrice": composeView.avpText.text as String!, "imageUrl": imgUrl as String!, "Rating": 0 as Int!])
             
             composeView.titleText.text = ""
             composeView.descText.text = ""
             composeView.avpText.text = ""
+            
+            
+            let vc = HomeViewController()
+            vc.postPostUrl.removeAll()
+            vc.postData.removeAll()
+            self.navigationController?.pushViewController(vc, animated: true)
+            
         }
         
     }
